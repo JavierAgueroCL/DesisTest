@@ -1,0 +1,14 @@
+h1 {
+	text-align: center;
+}
+main {
+	width: 50%;
+	margin-right: auto;
+    margin-left: auto;
+}
+.vcenter {
+    line-height: 43px;
+}
+.offset {
+	margin-top: 10px;
+}
