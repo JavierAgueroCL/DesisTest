@@ -18,6 +18,12 @@
 		DEBUG == true && console.log("RUT no valido: " + ninjarut.isValid);
 	}); 
 
+    // CAMBIO DE VALORES SELECT
+    jQuery("#ciudad").change(function () {
+        var valor = jQuery(this).val();
+        jQuery("#resultado").load("view/select.modal.php?ciudad=" + valor);
+    });
+
     // FORMULARIO AJAX
     frm.submit(function (ev) {
 		ev.preventDefault();
@@ -25,7 +31,7 @@
 
     	// VALIDACION DE TODOS LOS DATOS, DESDE HTML5
     	if (jQuery(this).get(0).checkValidity() == false){ return false; }
-    	if (ninjarut.isValid == false) { error(rut) }
+    	if (ninjarut.isValid == false) { error(rut); }
 
 
         jQuery.ajax({
@@ -43,7 +49,6 @@
             	//alert('error');	
             }
         });
-
 
     });
 
