@@ -1,6 +1,4 @@
 <?php
-include("../includes/base.conf.php");
-include("../includes/functions.php");
 referer();
 ?>
 <option value="1">Nightmare</option>

@@ -8,8 +8,9 @@ abstract class database {
 	protected $query;
 	protected $rows = array();
 	private $conn;
-	public $mensaje = '';
+	public $mensaje;
 	public $error;
+	public $result;
 
 	/**
 	 * Abre la conexion a la base de datos
@@ -29,7 +30,7 @@ abstract class database {
 	 * @return Bolean
 	 */
 	private function cerrar_conexion() {
-		pg_close($dbconn);
+		pg_close();
 	}
 
 	/**
@@ -39,7 +40,7 @@ abstract class database {
 	protected function execute_single_query() {
 		if($_POST) {
 			$this->abrir_conexion();
-			$this->conn->query($this->query);
+			$this->result = pg_query($this->query);
 			$this->cerrar_conexion();
 		} else {
 			$this->error = "Error";
@@ -49,20 +50,17 @@ abstract class database {
 
 	/**
 	 * Devuelve los resultados de una consulta (SELECT)
-	 * @return array
+	 * @return Array
 	 */
 	protected function get_results_from_query() {
 		$this->abrir_conexion();
-		$result = $this->conn->query($this->query);
+		$this->result = pg_query($this->query);
 
-		while ($this->rows[] = $result->fetch_assoc()){
+		while ($this->rows[] = pg_fetch_array($this->result)){
 			//array_pop($this->rows);
 		}
-
 		array_pop($this->rows); //ELIMINA EL ULTIMO RESULTADO 'null'
-		$result->free(); 
 		$this->cerrar_conexion();
-
 	}
 
 }
