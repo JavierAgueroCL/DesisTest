@@ -1,3 +1,3 @@
 <?php
-$GLOBALS['base'] 	= 	"http://localhost/";
+$GLOBALS['base'] 	= 	"http://dev.facturacion.cl/jaguero/";
 ?>

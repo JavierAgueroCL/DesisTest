@@ -1,27 +1,24 @@
 <?php
 # Importo base de datos
 require_once('db.class.php');
+require_once('functions.php');
 
 class Tabla extends database {
 
 	// METODOS BASICOS DE REGISTROS
-	public function get($condicion) {
-		if($condicion != ''){
-			$this->query = '
-			SELECT *
-			FROM usuarios
-			WHERE '.$condicion.'
-			ORDER BY "ID" desc';
+	public function get($consulta) {
+		if($consulta != ''){
+			$this->query = $consulta;
 
 			$this->get_results_from_query();
 		}
 		if(count($this->rows) >= 1) {
-			$this->error = "Exito";
-			$this->mensaje = "Registros encontrado";
+			$this->error = "Error";
+			$this->mensaje = "Ya existe";
 			return $this->rows;
 		} else {
-			$this->error = "Error";
-			$this->mensaje = 'Registro no encontrado';
+			$this->error = "Exito";
+			$this->mensaje = "El registro ha sido creado";
 		}
 	}
 
@@ -30,30 +27,41 @@ class Tabla extends database {
 
 		if(array_key_exists('rut', $user_data)) {
 
-			if(empty($user_data['rut'])) { //Verificacion de RUT
-				$this->error = "Error";
-				$this->mensaje = 'Las contraseñas ingresadas no son iguales';
-			}
-			/*elseif(!filter_var($user_data['email'], FILTER_VALIDATE_EMAIL)){
-				$this->error = "Error";
-				$this->mensaje = 'Ingrese un RUT valido';	//Incluir RUT.js
-				$this->mensaje = 'Ingrese un Email valido';	
-			}*/
-			else {
+			$busca_rut = $this->get("SELECT rut FROM  public.empresas where rut='".$user_data['rut']."';");
 
-				$this->query = "INSERT INTO public.usuarios(
-					nombre, email)
-					VALUES ('".$user_data['rut']."', '".$user_data['email']."');
+			if(count($busca_rut) >= 1) {  // Verifica si el rut ya existe
+				$this->error = "Error";
+				$this->mensaje = 'El rut ya esta registrado
+				<script>jQuery(".alert").removeClass("alert-success").addClass("alert-danger");</script>';
+			}  
+			else {
+	
+				$this->query = "
+					SELECT registro_empresa (
+						'".$user_data['rut']."',
+						'".$user_data['razon_social']."',
+						'".$user_data['giro_comercial']."',
+						'".$user_data['direccion']."',
+						".$user_data['ciudad'].",
+						".$user_data['comuna'].",
+						'".$user_data['nombre_contacto']."',
+						'".$user_data['email']."',
+						'".conv($user_data['factura'])."',
+						'".conv($user_data['boleta'])."',
+						'".conv($user_data['exportacion'])."',
+						'".conv($user_data['guia_despacho'])."',
+						'".conv($user_data['factura_compra'])."',
+						'".conv($user_data['liquidacion'])."',
+						'".conv($user_data['factura_exenta'])."'
+					);
 				";
 
 				$this->execute_single_query();
+				// $this->error = "Exito";
+				// $this->mensaje = 'El registro ha sido insertado
+				// <script>jQuery(".alert").removeClass("alert-danger").addClass("alert-success");</script>';
 
-				$this->error = "Exito";
-				$this->mensaje = 'Registro agregado exitosamente
-				<script>
-					jQuery(".alert").removeClass("alert-danger").addClass("alert-success");
-					jQuery("#cargar-info").trigger( "click" );
-				</script>';
+
 			}
 
 		} 

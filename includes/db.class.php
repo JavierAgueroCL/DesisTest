@@ -1,10 +1,10 @@
 <?php
 abstract class database {
-	private static $db_host = 'localhost';
-	private static $db_user = 'postgres';
-	private static $db_pass = '123';
+	private static $db_host = '192.168.1.11';
+	private static $db_user = 'candidato';
+	private static $db_pass = 'can6521';
 	private static $db_port = '5432';
-	protected $db_name = 'desis';
+	protected $db_name = 'jaguero';
 	protected $query;
 	protected $rows = array();
 	private $conn;
@@ -22,7 +22,7 @@ abstract class database {
 			port=".self::$db_port."
 			dbname=".$this->db_name."
 			user=".self::$db_user."
-			password=".self::$db_pass);
+			password=".self::$db_pass) or die('Conexion a SQL no establecida<script>jQuery(".alert").removeClass("alert-success").addClass("alert-danger");</script>');
 	}
 
 	/**
@@ -41,6 +41,22 @@ abstract class database {
 		if($_POST) {
 			$this->abrir_conexion();
 			$this->result = pg_query($this->query);
+			if($this->result == false) {
+				$this->error = "Error";
+				$this->mensaje = 'Consulta erronea: 
+				    <script>
+				 	jQuery(".alert").removeClass("alert-success").addClass("alert-danger");
+				 	jQuery("#cargar-info").trigger( "click" )
+				 	</script>'.pg_last_error();	
+			}
+			else {
+				$this->error = "Exito";
+				$this->mensaje = 'Registro Insertado
+				    <script>
+				 	jQuery(".alert").removeClass("alert-danger").addClass("alert-success");
+				 	jQuery("#cargar-info").trigger( "click" )
+				 	</script>';	
+			}
 			$this->cerrar_conexion();
 		} else {
 			$this->error = "Error";

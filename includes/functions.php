@@ -45,13 +45,34 @@ function recibir_formularios($post_data) {
 	$valores = array();
 	$security = new Security();
 
+	$errorJS = '<script>jQuery(".alert").removeClass("alert-success").addClass("alert-danger");</script>';
+
 	foreach ($post_data as $clave=>$valor) {
 		$valores["$clave"] = $valor;
 		//$valores["$clave"] = $security->sanitize($valor);
 		//array_push("$clave" => "$valor", $out);
 		
 	}
-	if(valida_rut($valores['rut']) == false){ echo 'RUT Invalido <script>jQuery(".alert").removeClass("alert-success").addClass("alert-danger");</script>'; exit();};
+	if(valida_rut($valores['rut']) == false){ 
+		echo 'RUT Invalido'.$errorJS; 
+		exit();
+	}
+	elseif(!filter_var($valores['email'], FILTER_VALIDATE_EMAIL)){
+		echo 'Email invalido'.$errorJS;
+		exit();
+	}
+	elseif(strlen($valores['giro_comercial']) < 6){
+		echo 'Ingrese un giro mas largo'.$errorJS;
+		exit();
+	}
+	elseif(empty($valores['razon_social']) or empty($valores['nombre_contacto'])){
+		echo 'No puede dejar su Razon Social y Nombre de Contacto vacios'.$errorJS;
+		exit();
+	}
+	elseif(empty($valores['factura']) or empty($valores['boleta']) or empty($valores['exportacion'])){
+		echo 'Debe seleccionar Facturas, Boletas y documentos de exportacion obligatoriamente'.$errorJS;
+		exit();
+	}
 	return $valores;
 }
 
@@ -85,6 +106,22 @@ function valida_rut($rut)
         return true;
     else
         return false;
+}
+
+/**
+ * Transforma el ON en integer
+ * @param string 
+ * @return integer
+ */
+function conv($valor){
+	if($valor == 'on') {
+		$out = 1;
+	}
+	else {
+		$out = 0;
+	}
+
+	return $out;
 }
 
 ?>
